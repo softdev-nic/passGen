@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="pass.css">
+
+    <title>Document</title>
+</head>
+<body>
+  
+    <div class="container" id="container"> 
+        <h1>Password Generator</h1>
+        <form  id="form" >
+            <input type="text" id="password"   >
+            <li style="list-style: none;">
+
+                <p id="copied" style="background: transparent; width:fit-content;justify-content: center; align-items: center;margin-left: 10px; display: none;">copied</p>
+                <button id="generatebtn">Generate Password</button>
+                <button id="copybtn">copy </button>
+  
+            </li>
+        </form>
+    </div>
+</body>
+<script src="resolution.js"></script>
+<script>
+    let genbtn = document.getElementById("generatebtn");
+    let pass = document.getElementById("password");
+    let copybtn = document.getElementById("copybtn");
+    let copiedtext = document.getElementById("copied");
+let password = "";
+const usedPasswords =[]
+const getRandomInt = (min, max) => {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+
+const helpertext = (text,color)=>{
+    copiedtext.innerText = text;
+    copiedtext.style.color= color;
+    copiedtext.style.display = "flex";
+
+    setTimeout(() => {
+        copiedtext.style.display = "none";
+    }, 2000);
+}
+genbtn.addEventListener("click", function (e) {
+    e.preventDefault();
+    let chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%";
+    password = ""
+    for (let i = 0; i < getRandomInt(16,50); i++) {
+        let randomIndex = Math.floor(Math.random() * chars.length);
+        password += chars[randomIndex];
+    }
+    
+    let pass = document.getElementById("password")
+    pass.value = password;
+    console.log(password)
+})
+const clearfield = () =>{
+    let timeint = setTimeout(()=>pass.value = "",3000)
+ 
+}
+const maskfield = ()=>{
+    let masked=""
+    let passArray = pass.value.split("")
+    console.log(passArray)
+      passArray.forEach(element => {
+        element="*"
+        masked+=element
+     });
+     pass.value = masked
+
+    
+     }
+
+const ispasswordUsed = (password) => {
+  let savedpassword = JSON.parse(localStorage.getItem("usedPasswords"));
+  if(savedpassword==null)
+  {
+    return false;
+  }
+  else if(savedpassword.includes(password))
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+};
+async function copyToClipboard(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    console.log('Text copied successfully!');
+
+    if(ispasswordUsed(password)===false)
+    {
+        usedPasswords.push(password)
+        console.log(usedPasswords)
+        localStorage.setItem("usedPasswords", JSON.stringify(usedPasswords));
+        helpertext("copied","green");
+         
+     }
+  
+    else
+  {
+
+       
+      helpertext("password already used","red");
+
+   
+      
+  }
+  
+
+    
+  } catch (err) {
+    console.error('Failed to copy: ', err);
+  }
+}
+copybtn.addEventListener("click", function (e) {
+    e.preventDefault()
+    copyToClipboard(password)
+
+})
+
+
+
+</script>
+</html>
+})
